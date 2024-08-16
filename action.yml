@@ -1,4 +1,4 @@
-name: "Release Generator"
+name: "Github Release Generator"
 description: "Automatically generate a release on GitHub"
 inputs:
   github_token:

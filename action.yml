@@ -1,12 +1,18 @@
-name: "Github Release Generator"
-description: "Automatically generate a release on GitHub"
+name: 'Github Release Generator'
+description: 'Generates a release based on commit messages and semantic versioning.'
+
+branding:
+  icon: 'package'
+  color: 'blue'
+  
 inputs:
   github_token:
-    description: "GitHub token for authentication"
+    description: 'GitHub token used for authentication'
     required: true
   add_description:
-    description: "Additional description for the release"
+    description: 'Additional custom description for the release'
     required: false
+
 runs:
   using: "docker"
   image: "Dockerfile"

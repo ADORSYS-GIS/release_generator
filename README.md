@@ -82,12 +82,3 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-### Notes:
-
-- Replace `your-username/your-repo@v1.0.0` in the usage example with your actual GitHub username and repository name.
-- Ensure your repository has a `LICENSE` file if you're planning to publish this action publicly.
-
-This README should give users clear instructions on how to use and contribute to your GitHub Action.

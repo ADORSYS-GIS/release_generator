@@ -4,7 +4,7 @@ description: 'Generates a release based on commit messages and semantic versioni
 branding:
   icon: 'package'
   color: 'blue'
-
+  
 inputs:
   github_token:
     description: 'GitHub token used for authentication'

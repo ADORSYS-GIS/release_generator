@@ -1,0 +1,15 @@
+name: "Release Generator"
+description: "Automatically generate a release on GitHub"
+inputs:
+  github_token:
+    description: "GitHub token for authentication"
+    required: true
+  add_description:
+    description: "Additional description for the release"
+    required: false
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.add_description }}

@@ -3,8 +3,8 @@ import os
 import re
 
 # Replace with your repo and owner
-GITHUB_OWNER = "ADORSYS-GIS"
-GITHUB_REPO = "wazuh"
+GITHUB_OWNER = os.getenv("GITHUB_USERNAME")
+GITHUB_REPO = os.getenv("REPO_NAME")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # GitHub API URLs

@@ -19,3 +19,5 @@ runs:
   args:
     - ${{ inputs.github_token }}
     - ${{ inputs.add_description }}
+    - ${{ secrets.GITHUB_USERNAME }}
+    - ${{ secrets.REPO_NAME }}

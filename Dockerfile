@@ -13,6 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Set the environment variables for the GitHub Action
 ENV GITHUB_TOKEN=$GITHUB_TOKEN
 ENV ADD_DESCRIPTION=$ADD_DESCRIPTION
+ENV REPO_NAME=$REPO_NAME
+ENV GITHUB_USERNAME=$GITHUB_USERNAME
 
 # Run the script when the container starts
 ENTRYPOINT ["python", "create_release.py"]

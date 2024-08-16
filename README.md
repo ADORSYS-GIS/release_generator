@@ -46,6 +46,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           add_description: "This is an additional note for the release."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+          REPO_NAME: ${{ secrets.REPO_NAME }}
 ```
 
 ## How It Works

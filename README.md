@@ -17,6 +17,9 @@ This GitHub Action automates the process of generating releases in your GitHub r
 |--------------------|---------------------------------------------------------------------------|----------|---------------|
 | `github_token`     | GitHub token used for authentication with the GitHub API.                 | Yes      | N/A           |
 | `add_description`  | Additional custom description for the release.                           | No       | N/A           |
+| `github_owner`     | The GitHub username or organization that owns the repository.            | Yes      | N/A            |
+| `github_repo`      | The name of the repository on GitHub where the release will be created.  | Yes      | N/A            |
+| `incremental_type` | The type of version increment to use (`major`, `minor`, or `patch`).     | No       | `patch`        |
 
 ## Outputs
 
@@ -28,6 +31,9 @@ Here’s an example of how to use this GitHub Action in a workflow:
 
 ```yaml
 name: Release Workflow
+
+env:
+  INCREMENTAL_TYPE: patch
 
 on:
   push:
@@ -50,6 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
+          INCREMENTAL_TYPE: ${{ env.INCREMENTAL_TYPE }}
 ```
 
 ## How It Works

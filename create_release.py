@@ -47,8 +47,8 @@ def get_latest_release():
     return "0.0.0"
 
 
-def increment_version(version):
-    """Increment the patch version number."""
+def increment_version(version, increment_type="patch"):
+    """Increment the version number based on the increment type."""
     # Remove the 'v' prefix if it exists
     if version.startswith('v'):
         version = version[1:]
@@ -59,11 +59,16 @@ def increment_version(version):
         raise ValueError(f"Invalid semantic version: {version}")
 
     major, minor, patch = map(int, match.groups())
-    patch += 1  # Increment the patch version
 
-    # If the version was "0.0.0", return "0.0.1"
-    if version == "0.0.0":
-        return "0.0.1"
+    if increment_type == "major":
+        major += 1
+        minor = 0
+        patch = 0
+    elif increment_type == "minor":
+        minor += 1
+        patch = 0
+    else:  # Default to patch
+        patch += 1
 
     return f"{major}.{minor}.{patch}"
 
@@ -118,19 +123,22 @@ def main():
         latest_version = get_latest_release()
         print(f"Latest version: {latest_version}")
 
-        new_version = increment_version(latest_version)
+        # Check if 'INCREMENT_TYPE' is set as an environment variable
+        increment_type = os.getenv("INCREMENT_TYPE", "patch").strip().lower()
+        print(f"Using increment type: {increment_type}")
+
+        new_version = increment_version(latest_version, increment_type)
         print(f"New version: {new_version}")
 
         commit_messages = get_commit_messages(latest_version)
 
-        # Check if 'add_description' is set as an environment variable
+        # Check if 'ADD_DESCRIPTION' is set as an environment variable
         add_description = os.getenv("ADD_DESCRIPTION", None)
 
         if add_description:
             release_body = generate_release_body(commit_messages, add_description)
         else:
-            manual_message = input("Enter any additional release notes (optional): ")
-            release_body = generate_release_body(commit_messages, manual_message)
+            release_body = generate_release_body(commit_messages)
 
         print(f"Generated release notes:\n{release_body}")
 

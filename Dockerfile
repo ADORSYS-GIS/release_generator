@@ -18,4 +18,4 @@ ENV GITHUB_USERNAME=$GITHUB_USERNAME
 ENV INCREMENT_TYPE=$INCREMENT_TYPE
 
 # Run the script when the container starts
-ENTRYPOINT ["python", "create_release.py"]
+ENTRYPOINT ["python", "/app/create_release.py"]

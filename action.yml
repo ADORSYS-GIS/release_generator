@@ -12,6 +12,17 @@ inputs:
   add_description:
     description: 'Additional custom description for the release'
     required: false
+    default: ''
+  increment_type:
+    description: 'Type of version increment: major, minor, or patch'
+    required: false
+    default: 'patch'
+  github_username:
+    description: 'GitHub username'
+    required: true
+  repo_name:
+    description: 'Repository name'
+    required: true
 
 runs:
   using: "docker"
@@ -19,5 +30,6 @@ runs:
   args:
     - ${{ inputs.github_token }}
     - ${{ inputs.add_description }}
-    - ${{ secrets.GITHUB_USERNAME }}
-    - ${{ secrets.REPO_NAME }}
+    - ${{ inputs.increment_type }}
+    - ${{ inputs.github_username }}
+    - ${{ inputs.repo_name }}

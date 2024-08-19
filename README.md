@@ -75,7 +75,7 @@ To test or modify this action locally, you can build and run the Docker containe
 
 ```bash
 docker build -t release-generator .
-docker run -e GITHUB_TOKEN=your-token -e ADD_DESCRIPTION="This is a test release" release-generator
+docker run --rm -e GITHUB_TOKEN=your-token -e ADD_DESCRIPTION="This is a test release" -e REPO_NAME=your_repo_name -e GITHUB_USERNAME=your_github_username -e INCREMENT_TYPE=major release-generator
 ```
 
 ## Contributing

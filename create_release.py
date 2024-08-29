@@ -80,39 +80,37 @@ def increment_version(version, increment_type="patch"):
     return f"{major}.{minor}.{patch}"
 
 
-def get_commit_messages(previous_tag):
-    """Get commit messages between the last release tag and the current HEAD."""
-    if previous_tag == "0.0.0":
-        print("This is the first release, no comparison necessary.")
-        return ["Initial release."]
-
+def get_commit_messages(since_tag):
+    """Get detailed commit messages since the last release or tag."""
     headers = {'Authorization': f'token {GITHUB_TOKEN}'}
-    compare_url = f"{GITHUB_API_URL}/compare/{previous_tag}...main"
-
-    response = requests.get(compare_url, headers=headers)
+    params = {'sha': 'main', 'since': since_tag}
+    response = requests.get(COMMITS_URL, headers=headers, params=params)
 
     if response.status_code != 200:
-        raise Exception(f"Failed to fetch comparison: {response.status_code}")
+        raise Exception(f"Failed to fetch commits: {response.status_code}")
 
-    comparison = response.json()
-    commits = comparison['commits']
+    commits = response.json()  # Get full commit details
 
-    commit_messages = [f"{commit['commit']['message']} by {commit['commit']['author']['name']} in {commit['sha'][:7]}" for commit in commits]
-
-    return commit_messages
+    return commits
 
 
-def generate_release_body(commit_messages, manual_message=None):
-    """Generate the release body from commit messages and manual input."""
+def generate_release_body(commits, manual_message=None):
+    """Generate a more detailed release body from commit messages and manual input."""
+
+    # Start with a header
     body = "### What's Changed\n\n"
-    for commit in commit_messages:
-        commit_message = commit['message']
-        author_login = commit['author_login']
-        commit_url = commit['commit_url']
 
-        # Format each commit entry with message, author, and commit URL
-        body += f"- {commit_message} by [{author_login}]({commit_url})\n"
+    # Iterate over the commits and format them
+    for commit in commits:
+        author = commit['commit']['author']['name']
+        message = commit['commit']['message']
+        sha = commit['sha'][:7]  # Shortened commit hash
+        url = commit['html_url']
 
+        # Add each commit message with the author and a link to the commit
+        body += f"- {message} ([{sha}]({url})) by **{author}**\n"
+
+    # Append any additional notes
     if manual_message:
         body += f"\n### Additional Notes:\n{manual_message}\n"
 

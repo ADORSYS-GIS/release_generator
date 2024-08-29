@@ -43,8 +43,15 @@ def get_latest_release():
         latest_tag = tags[0]["name"]
         return latest_tag
 
-    # If no releases or tags are found, return a default value
-    return "0.0.0"
+    # If no releases or tags are found, return None to indicate no previous versions
+    return None
+
+
+# If no releases or tags are found, consider this as the first release
+latest_version = get_latest_release()
+if not latest_version:
+    print("No previous releases or tags found.")
+    latest_version = "0.0.0"  # Consider this the first release
 
 
 def increment_version(version, increment_type="patch"):
@@ -73,25 +80,45 @@ def increment_version(version, increment_type="patch"):
     return f"{major}.{minor}.{patch}"
 
 
-def get_commit_messages(since_tag):
-    """Get commit messages since the last release or tag."""
+def get_commit_messages(previous_tag):
+    """Get commit messages between the last release tag and the current HEAD."""
     headers = {'Authorization': f'token {GITHUB_TOKEN}'}
-    params = {'sha': 'main', 'since': since_tag}
-    response = requests.get(COMMITS_URL, headers=headers, params=params)
+
+    # Use the GitHub API to compare the latest tag with the main branch
+    compare_url = f"{GITHUB_API_URL}/compare/{previous_tag}...main"
+    response = requests.get(compare_url, headers=headers)
 
     if response.status_code != 200:
-        raise Exception(f"Failed to fetch commits: {response.status_code}")
+        raise Exception(f"Failed to fetch comparison: {response.status_code}")
 
-    commits = response.json()
-    commit_messages = [commit['commit']['message'] for commit in commits]
+    comparison = response.json()
+
+    commit_messages = []
+
+    for commit in comparison.get('commits', []):
+        message = commit['commit']['message'].split('\n')[0]  # Get the first line of the commit message
+        author_login = commit['author']['login'] if commit['author'] else "Unknown"
+        commit_url = commit['html_url']
+
+        commit_messages.append({
+            'message': message,
+            'author_login': author_login,
+            'commit_url': commit_url
+        })
+
     return commit_messages
 
 
 def generate_release_body(commit_messages, manual_message=None):
     """Generate the release body from commit messages and manual input."""
-    body = "### Changes in this release:\n\n"
-    for message in commit_messages:
-        body += f"- {message}\n"
+    body = "### What's Changed\n\n"
+    for commit in commit_messages:
+        commit_message = commit['message']
+        author_login = commit['author_login']
+        commit_url = commit['commit_url']
+
+        # Format each commit entry with message, author, and commit URL
+        body += f"- {commit_message} by [{author_login}]({commit_url})\n"
 
     if manual_message:
         body += f"\n### Additional Notes:\n{manual_message}\n"
@@ -121,6 +148,10 @@ def create_release(new_version, release_body):
 def main():
     try:
         latest_version = get_latest_release()
+        if latest_version is None:
+            print("No previous releases or tags found.")
+            latest_version = "0.0.0"  # Consider this as the first release
+
         print(f"Latest version: {latest_version}")
 
         # Set the output for GitHub Actions
@@ -142,6 +173,7 @@ def main():
         with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
             env_file.write(f"new_version={new_version}\n")
 
+        # Fetch commits since the last release
         commit_messages = get_commit_messages(latest_version)
 
         # Check if 'ADD_DESCRIPTION' is set as an environment variable

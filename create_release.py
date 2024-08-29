@@ -82,29 +82,22 @@ def increment_version(version, increment_type="patch"):
 
 def get_commit_messages(previous_tag):
     """Get commit messages between the last release tag and the current HEAD."""
-    headers = {'Authorization': f'token {GITHUB_TOKEN}'}
+    if previous_tag == "0.0.0":
+        print("This is the first release, no comparison necessary.")
+        return ["Initial release."]
 
-    # Use the GitHub API to compare the latest tag with the main branch
+    headers = {'Authorization': f'token {GITHUB_TOKEN}'}
     compare_url = f"{GITHUB_API_URL}/compare/{previous_tag}...main"
+
     response = requests.get(compare_url, headers=headers)
 
     if response.status_code != 200:
         raise Exception(f"Failed to fetch comparison: {response.status_code}")
 
     comparison = response.json()
+    commits = comparison['commits']
 
-    commit_messages = []
-
-    for commit in comparison.get('commits', []):
-        message = commit['commit']['message'].split('\n')[0]  # Get the first line of the commit message
-        author_login = commit['author']['login'] if commit['author'] else "Unknown"
-        commit_url = commit['html_url']
-
-        commit_messages.append({
-            'message': message,
-            'author_login': author_login,
-            'commit_url': commit_url
-        })
+    commit_messages = [f"{commit['commit']['message']} by {commit['commit']['author']['name']} in {commit['sha'][:7]}" for commit in commits]
 
     return commit_messages
 

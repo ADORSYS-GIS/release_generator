@@ -123,12 +123,24 @@ def main():
         latest_version = get_latest_release()
         print(f"Latest version: {latest_version}")
 
+        # Set the output for GitHub Actions
+        print(f"::set-output name=latest_version::{latest_version}")
+        # Alternatively, use GITHUB_ENV for the latest GitHub Actions format
+        with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
+            env_file.write(f"latest_version={latest_version}\n")
+
         # Check if 'INCREMENT_TYPE' is set as an environment variable
         increment_type = os.getenv("INCREMENT_TYPE", "patch").strip().lower()
         print(f"Using increment type: {increment_type}")
 
         new_version = increment_version(latest_version, increment_type)
         print(f"New version: {new_version}")
+
+        # Set the output for new_version as well
+        print(f"::set-output name=new_version::{new_version}")
+        # Alternatively, use GITHUB_ENV
+        with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
+            env_file.write(f"new_version={new_version}\n")
 
         commit_messages = get_commit_messages(latest_version)
 

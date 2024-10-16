@@ -19,7 +19,7 @@ This GitHub Action automates the process of generating releases in your GitHub r
 | `add_description`  | Additional custom description for the release.                           | No       | N/A           |
 | `github_owner`     | The GitHub username or organization that owns the repository.            | Yes      | N/A            |
 | `github_repo`      | The name of the repository on GitHub where the release will be created.  | Yes      | N/A            |
-| `incremental_type` | The type of version increment to use (`major`, `minor`, or `patch`).     | No       | `patch`        |
+| `increment_type` | The type of version increment to use (`major`, `minor`, or `patch`).     | No       | `patch`        |
 
 ## Outputs
 
@@ -33,7 +33,7 @@ Here’s an example of how to use this GitHub Action in a workflow:
 name: Release Workflow
 
 env:
-  INCREMENTAL_TYPE: patch
+  INCREMENT_TYPE: patch
 
 on:
   push:
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate Release
-        uses: ADORSYS-GIS/release_generator@v1.0.0
+        uses: ADORSYS-GIS/release_generator@v1.0.7
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           add_description: "This is an additional note for the release."
@@ -56,7 +56,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
-          INCREMENTAL_TYPE: ${{ env.INCREMENTAL_TYPE }}
+          INCREMENT_TYPE: ${{ env.INCREMENT_TYPE }}
 ```
 
 ## How It Works
